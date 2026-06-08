@@ -1,0 +1,52 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model RestaurantConfig {
+  id        String   @id @default(cuid())
+  name      String
+  address   String
+  phone     String
+  hours     Json
+  menu      Json
+  faqs      Json
+  updatedAt DateTime @updatedAt
+}
+
+model Conversation {
+  id          String    @id @default(cuid())
+  phoneNumber String
+  status      String    @default("active")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  messages    Message[]
+  reservation Reservation?
+}
+
+model Message {
+  id             String       @id @default(cuid())
+  conversationId String
+  role           String
+  content        String
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+}
+
+model Reservation {
+  id             String       @id @default(cuid())
+  conversationId String       @unique
+  phoneNumber    String
+  guestName      String
+  date           String
+  time           String
+  partySize      Int
+  status         String       @default("pending")
+  notes          String?
+  createdAt      DateTime     @default(now())
+  conversation   Conversation @relation(fields: [conversationId], references: [id])
+}
