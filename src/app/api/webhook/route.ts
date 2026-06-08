@@ -43,6 +43,7 @@ export async function POST(req: NextRequest) {
       where: { id: created.id },
       include: { messages: { orderBy: { createdAt: "asc" } }, reservation: true },
     });
+    if (!conversation) return new NextResponse(null, { status: 500 });
   }
 
   await db.message.create({
