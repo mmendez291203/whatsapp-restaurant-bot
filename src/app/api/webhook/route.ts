@@ -35,6 +35,15 @@ export async function POST(req: NextRequest) {
     include: { messages: { orderBy: { createdAt: "asc" } }, reservation: true },
   });
 
+  const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+  if (conversation && conversation.updatedAt < twentyFourHoursAgo) {
+    await db.conversation.update({
+      where: { id: conversation.id },
+      data: { status: "closed" },
+    });
+    conversation = null;
+  }
+
   if (!conversation) {
     const created = await db.conversation.create({
       data: { phoneNumber },
