@@ -36,7 +36,7 @@ export async function POST(req: NextRequest) {
   });
 
   const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
-  if (conversation && conversation.updatedAt < twentyFourHoursAgo) {
+  if (conversation && conversation.createdAt < twentyFourHoursAgo) {
     await db.conversation.update({
       where: { id: conversation.id },
       data: { status: "closed" },
