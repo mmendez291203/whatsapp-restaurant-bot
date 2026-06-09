@@ -50,6 +50,11 @@ export async function POST(req: NextRequest) {
     data: { conversationId: conversation.id, role: "user", content: Body },
   });
 
+  await db.conversation.update({
+    where: { id: conversation.id },
+    data: { updatedAt: new Date() },
+  });
+
   const history = conversation.messages.map((m) => ({
     role: m.role as "user" | "assistant",
     content: m.content,
